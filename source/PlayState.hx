@@ -8,12 +8,12 @@ class PlayState extends FlxState
 	{
 		super.create();
 
-		var text = new flixel.text.FlxText(0, 0, 0, "Hello World", 64);
+		var text = new flixel.text.FlxText(0, 0, 0, "Block Chain", 64);
 		text.screenCenter();
 		add(text);
 
-		var player = new Player(10, 10);
-		add(player);
+		var playerAndEnemy = new PlayerEnemyChain();
+		add(playerAndEnemy);
 
 		var obstacle = new Obstacle();
 		add(obstacle);
