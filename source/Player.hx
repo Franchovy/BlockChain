@@ -69,22 +69,28 @@ class Player extends FlxSprite
 
 	function updateDigital():Void
 	{
-		if (down.triggered)
+		if (down.triggered != up.triggered)
 		{
-			moveY = 1;
-		}
-		else if (up.triggered)
-		{
-			moveY = -1;
+			if (down.triggered)
+			{
+				moveY = 1;
+			}
+			else if (up.triggered)
+			{
+				moveY = -1;
+			}
 		}
 
-		if (left.triggered)
+		if (left.triggered != right.triggered)
 		{
-			moveX = -1;
-		}
-		else if (right.triggered)
-		{
-			moveX = 1;
+			if (left.triggered)
+			{
+				moveX = -1;
+			}
+			else if (right.triggered && !left.triggered)
+			{
+				moveX = 1;
+			}
 		}
 
 		if (moveX != 0 && moveY != 0)
