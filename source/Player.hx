@@ -1,7 +1,9 @@
 package;
 
+import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.input.actions.FlxAction.FlxActionDigital;
+import flixel.input.actions.FlxActionManager;
 import flixel.util.FlxColor;
 
 class Player extends FlxSprite
@@ -16,6 +18,8 @@ class Player extends FlxSprite
 
 	var moveX:Float = 0;
 	var moveY:Float = 0;
+
+	static var actions:FlxActionManager;
 
 	public function new(X:Int, Y:Int)
 	{
@@ -41,6 +45,10 @@ class Player extends FlxSprite
 		down.addKey(S, PRESSED);
 		left.addKey(A, PRESSED);
 		right.addKey(D, PRESSED);
+
+		if (actions == null)
+			actions = FlxG.inputs.add(new FlxActionManager());
+		actions.addActions([up, down, left, right]);
 	}
 
 	override public function update(elapsed:Float):Void
