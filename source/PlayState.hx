@@ -12,8 +12,8 @@ class PlayState extends FlxState
 		text.screenCenter();
 		add(text);
 
-		var player = new Player(10, 10);
-		add(player);
+		var playerAndEnemy = new PlayerEnemyChain();
+		add(playerAndEnemy);
 	}
 
 	override public function update(elapsed:Float)
