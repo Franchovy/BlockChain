@@ -14,6 +14,9 @@ class PlayState extends FlxState
 
 		var player = new Player(10, 10);
 		add(player);
+
+		var obstacle = new Obstacle();
+		add(obstacle);
 	}
 
 	override public function update(elapsed:Float)
