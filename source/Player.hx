@@ -9,15 +9,22 @@ import flixel.util.FlxColor;
 class Player extends FlxSprite
 {
 	static inline var TILE_SIZE:Int = 32;
-	static inline var MOVEMENT_SPEED:Int = 2;
+	static inline var SPEED:Float = 300;
+	static inline var MAX_SPEED:Float = 250;
+	static inline var ACCELERATION:Float = 900;
+	static inline var BRAKE_MULTIPLIER:Float = 10;
+
+	static inline var DIAGONAL_MULTIPLER:Float = 0.707;
+
+	var shouldMultiplyDiagonal = false;
 
 	var up:FlxActionDigital;
 	var down:FlxActionDigital;
 	var left:FlxActionDigital;
 	var right:FlxActionDigital;
 
-	var moveX:Float = 0;
-	var moveY:Float = 0;
+	var targetVelX:Float = 0;
+	var targetVelY:Float = 0;
 
 	static var actions:FlxActionManager;
 
@@ -28,6 +35,9 @@ class Player extends FlxSprite
 
 		// Make the player graphic.
 		makeGraphic(TILE_SIZE, TILE_SIZE, FlxColor.WHITE);
+
+		maxVelocity.x = MAX_SPEED;
+		maxVelocity.y = MAX_SPEED;
 
 		addInputs();
 	}
@@ -55,48 +65,48 @@ class Player extends FlxSprite
 	{
 		super.update(elapsed);
 
-		velocity.x = 0;
-		velocity.y = 0;
-
-		y += moveY * MOVEMENT_SPEED;
-		x += moveX * MOVEMENT_SPEED;
-
-		moveX = 0;
-		moveY = 0;
+		acceleration.x = 0;
+		acceleration.y = 0;
 
 		updateDigital();
 	}
 
 	function updateDigital():Void
 	{
+		shouldMultiplyDiagonal = (down.triggered != up.triggered) && (left.triggered != right.triggered);
+
+		var currentAcceleration = ACCELERATION * (shouldMultiplyDiagonal ? DIAGONAL_MULTIPLER : 1.0);
+
 		if (down.triggered != up.triggered)
 		{
 			if (down.triggered)
 			{
-				moveY = 1;
+				acceleration.y = currentAcceleration;
 			}
 			else if (up.triggered)
 			{
-				moveY = -1;
+				acceleration.y = -currentAcceleration;
 			}
+		}
+		else if (!down.triggered && !up.triggered)
+		{
+			acceleration.y = -velocity.y * BRAKE_MULTIPLIER;
 		}
 
 		if (left.triggered != right.triggered)
 		{
 			if (left.triggered)
 			{
-				moveX = -1;
+				acceleration.x = -currentAcceleration;
 			}
 			else if (right.triggered && !left.triggered)
 			{
-				moveX = 1;
+				acceleration.x = currentAcceleration;
 			}
 		}
-
-		if (moveX != 0 && moveY != 0)
+		else if (!right.triggered && !left.triggered)
 		{
-			moveY *= .707;
-			moveX *= .707;
+			acceleration.x = -velocity.x * BRAKE_MULTIPLIER;
 		}
 	}
 }
