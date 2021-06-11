@@ -22,4 +22,18 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 		add(player);
 		add(enemy);
 	}
+
+	override public function update(elapsed:Float):Void
+	{
+		super.update(elapsed);
+
+		// if player is moving away from enemy
+		// - drag enemy with player, matching velocity at drag angle
+
+		// shorten distance between player and enemy over time
+		var enemyMoveX = player.x - enemy.x;
+		var enemyMoveY = player.y - enemy.y;
+		enemy.velocity.x = enemyMoveX;
+		enemy.velocity.y = enemyMoveY;
+	}
 }

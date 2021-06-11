@@ -8,7 +8,7 @@ class PlayState extends FlxState
 	{
 		super.create();
 
-		var text = new flixel.text.FlxText(0, 0, 0, "Hello World", 64);
+		var text = new flixel.text.FlxText(0, 0, 0, "Block Chain", 64);
 		text.screenCenter();
 		add(text);
 
