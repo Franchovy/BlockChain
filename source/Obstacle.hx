@@ -22,8 +22,6 @@ class Obstacle extends FlxSprite
 
 	public function spawn()
 	{
-		var isVertical:Bool = Random.bool();
-
 		if (Random.bool())
 		{
 			// Along top or bottom of the screen
@@ -38,32 +36,13 @@ class Obstacle extends FlxSprite
 			y = Random.int(1, FlxG.height - SIZE - 1);
 			velocity.set(x > 0 ? -SPEED : SPEED, 0);
 		}
-
-		if (isVertical)
-			velocity.y = y > 0 ? -SPEED : SPEED;
-		else
-			velocity.x = x > 0 ? -SPEED : SPEED;
 	}
 
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
 
-		if (velocity.x > 0 && x > FlxG.width)
-		{
+		if (!isOnScreen())
 			kill();
-		}
-		else if (velocity.x < 0 && x < SIZE)
-		{
-			kill();
-		}
-		else if (velocity.y > 0 && y > FlxG.height)
-		{
-			kill();
-		}
-		else if (velocity.y < 0 && y < SIZE)
-		{
-			kill();
-		}
 	}
 }
