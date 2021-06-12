@@ -99,7 +99,7 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 		}
 	}
 
-	var chainDistance = 150;
+	var chainDistance = 450;
 	var ENEMY_ACCELERATION = 20000;
 	var ENEMY_MAX_SPEED = 10000;
 	var ENEMY_DRAG = 0.9;
@@ -134,17 +134,34 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 			{
 				power += 0.1 * (1 / power);
 			}
+
+			angle -= 15;
 		}
 		else
 		{
 			power = 0.0;
 		}
 
+		var extraSpeed = Math.pow(1.1, power);
+
+		// bring chain in if shift is pressed
+		if (shiftInput.triggered)
+		{
+			chainDistance = 150;
+			extraSpeed += 1.0;
+
+			angle += 45;
+		}
+		else
+		{
+			chainDistance = 250;
+		}
+
 		var targetRelativeToPlayer = FlxVelocity.velocityFromAngle(angle, chainDistance * Math.pow(1.1, power));
 
 		var targetDistance = targetRelativeToPlayer.distanceTo(new FlxPoint(0, 0));
 
-		FlxVelocity.moveTowardsPoint(enemy, playerPos.addPoint(targetRelativeToPlayer), Math.pow(targetDistance, 1.1 * Math.pow(1.1, power)));
+		FlxVelocity.moveTowardsPoint(enemy, playerPos.addPoint(targetRelativeToPlayer), targetDistance * extraSpeed);
 
 		positionBlocks();
 	}
