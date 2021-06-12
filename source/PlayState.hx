@@ -1,6 +1,7 @@
 package;
 
 import flixel.FlxG;
+import flixel.FlxObject;
 import flixel.FlxState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.input.actions.FlxAction.FlxActionDigital;
@@ -13,14 +14,13 @@ import flixel.util.FlxColor;
 class PlayState extends FlxState
 {
 	var menu = true;
+	var game_over = false;
 	var level_clear = false;
 	var blockChainText:FlxText;
 	var startGameText:FlxText;
 	var obstaclesPool:FlxTypedGroup<Obstacle>;
 
-	var player:Player;
-	var enemy:Enemy;
-	var blockchain:FlxTypedGroup<ChainBlock>;
+	var playerAndEnemy:PlayerEnemyChain;
 
 	var spaceInput:FlxActionDigital;
 
@@ -32,12 +32,14 @@ class PlayState extends FlxState
 
 		var poolSize = 30;
 		obstaclesPool = new FlxTypedGroup<Obstacle>(poolSize);
-		for (i in 0...poolSize)
+		for (_ in 0...poolSize)
 		{
 			var obstacle = new Obstacle();
 			obstacle.kill();
 			obstaclesPool.add(obstacle);
 		}
+
+		playerAndEnemy = new PlayerEnemyChain(7);
 
 		// Add menu text
 
@@ -69,7 +71,6 @@ class PlayState extends FlxState
 		startGameText.kill();
 		blockChainText.kill();
 
-		var playerAndEnemy = new PlayerEnemyChain(7);
 		add(playerAndEnemy);
 	}
 
@@ -88,12 +89,19 @@ class PlayState extends FlxState
 			}
 		}
 
-		if (level_clear)
+		if (FlxG.overlap(obstaclesPool, playerAndEnemy.player))
+		{
+			game_over = true;
+			playerAndEnemy.kill();
+			// TODO: Implement try again after game over
+		}
+
+		if (level_clear || game_over)
 		{
 			return;
 		}
 
-		FlxG.collide(blockchain, obstaclesPool);
+		FlxG.collide(obstaclesPool, playerAndEnemy);
 
 		// 1 out of 10 chance of spawning block per second.
 		if (Random.float(0, 10.0) * elapsedSinceLastSpawn > 9)

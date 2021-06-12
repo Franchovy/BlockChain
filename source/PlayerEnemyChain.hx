@@ -21,7 +21,8 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 	var ENEMY_SIZE:Int = 25;
 	var BLOCK_SIZE:Int = 15;
 
-	var player:Player;
+	public var player:Player;
+
 	var enemy:Enemy;
 
 	var numBlocks:Int;
