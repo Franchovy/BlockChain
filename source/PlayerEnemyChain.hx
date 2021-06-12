@@ -7,6 +7,10 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 import flixel.input.actions.FlxAction.FlxActionDigital;
 import flixel.input.actions.FlxActionManager;
+import flixel.math.FlxAngle;
+import flixel.math.FlxPoint;
+import flixel.math.FlxVector;
+import flixel.math.FlxVelocity;
 import flixel.util.FlxColor;
 import js.html.Console;
 
@@ -71,12 +75,41 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 		}
 	}
 
+	var chainDistance = 150;
+	var ENEMY_ACCELERATION = 20000;
+	var ENEMY_MAX_SPEED = 10000;
+	var ENEMY_DRAG = 0.9;
+
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
 
-		enemy.velocity.x = player.velocity.x / 2;
-		enemy.velocity.y = player.velocity.y / 2;
+		// var playerVelocityAngle = Math.atan2(player.velocity.y, player.velocity.x);
+		// trace("Player velocity angle: "); // √
+		// trace(playerVelocityAngle / (Math.PI * 2) * 360);
+		// var enemyToPlayerAngle = Math.PI - Math.atan2(enemy.y - player.y, enemy.x - player.x);
+		// trace("Enemy to player angle: "); // √
+		// trace(enemyToPlayerAngle / (Math.PI * 2) * 360);
+
+		var enemyPlayerDistanceX = player.x - enemy.x;
+		var enemyPlayerDistanceY = player.y - enemy.y;
+		var enemyPlayerDistanceVector = new FlxPoint(enemyPlayerDistanceX, enemyPlayerDistanceY);
+
+		if (cast(enemyPlayerDistanceVector, FlxVector).length > chainDistance)
+		{
+			// Accelerate
+			FlxVelocity.accelerateTowardsObject(enemy, player, ENEMY_ACCELERATION, ENEMY_MAX_SPEED);
+			trace("Accelerating");
+		}
+		else
+		{
+			enemy.acceleration.x = -enemy.acceleration.x / 2;
+			enemy.acceleration.y = -enemy.acceleration.y / 2;
+			enemy.velocity.x = enemy.velocity.x * ENEMY_DRAG;
+			enemy.velocity.y = enemy.velocity.y * ENEMY_DRAG;
+
+			trace("Slowing down");
+		}
 
 		positionBlocks();
 	}
