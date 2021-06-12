@@ -24,11 +24,11 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 	var hud:HUD;
 
 	public var player:Player;
-
-	var enemy:Enemy;
+	public var enemy:Enemy;
 
 	var numBlocks:Int;
-	var blockchain:List<ChainBlock>;
+
+	public var blockchain:List<ChainBlock>;
 
 	var shiftInput:FlxActionDigital;
 	var spaceInput:FlxActionDigital;
@@ -74,7 +74,7 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 	private function positionBlocks()
 	{
 		var i = 1;
-		var n = numBlocks + 1;
+		var n = numBlocks + 2;
 
 		for (block in blockchain)
 		{
@@ -104,7 +104,13 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 		}
 	}
 
-	var chainDistance = 450;
+	public function loseBlock(block:ChainBlock)
+	{
+		blockchain.remove(block);
+		numBlocks = blockchain.length;
+	}
+
+	var chainDistance = 250;
 	var ENEMY_ACCELERATION = 20000;
 	var ENEMY_MAX_SPEED = 10000;
 	var ENEMY_DRAG = 0.9;
@@ -161,7 +167,7 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 		}
 		else
 		{
-			chainDistance = 250;
+			chainDistance = blockchain.length * 30;
 		}
 
 		var targetRelativeToPlayer = FlxVelocity.velocityFromAngle(angle, chainDistance * Math.pow(1.1, power));

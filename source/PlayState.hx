@@ -111,6 +111,14 @@ class PlayState extends FlxState
 
 		FlxG.collide(obstaclesPool, playerAndEnemy);
 
+		for (block in playerAndEnemy.blockchain)
+		{
+			if (FlxG.overlap(obstaclesPool, block))
+			{
+				playerAndEnemy.loseBlock(block);
+			}
+		}
+
 		// 1 out of 10 chance of spawning block per second.
 		if (Random.float(0, 10.0) * elapsedSinceLastSpawn > 9)
 		{
