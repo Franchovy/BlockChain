@@ -66,6 +66,8 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 		positionBlocks();
 
 		// Add to screen
+		player.kill();
+
 		add(player);
 		add(enemy);
 
