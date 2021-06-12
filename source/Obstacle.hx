@@ -12,8 +12,13 @@ class Obstacle extends FlxSprite
 
 	public function new()
 	{
-		var x:Int;
-		var y:Int;
+		super();
+
+		makeGraphic(SIZE, SIZE, FlxColor.BLUE);
+	}
+
+	public function spawn()
+	{
 		var isVertical:Bool = Random.bool();
 
 		if (isVertical)
@@ -29,13 +34,40 @@ class Obstacle extends FlxSprite
 			y = Random.int(0, FlxG.height - SIZE);
 		}
 
-		super(x, y);
-
-		makeGraphic(SIZE, SIZE, FlxColor.BLUE);
-
 		if (isVertical)
 			velocity.y = y > 0 ? -SPEED : SPEED;
 		else
 			velocity.x = x > 0 ? -SPEED : SPEED;
+	}
+
+	override public function update(elapsed:Float)
+	{
+		super.update(elapsed);
+
+		trace("Velocity X:");
+		trace(velocity.x);
+		trace("Velocity Y:");
+		trace(velocity.y);
+
+		if (velocity.x > 0 && x > FlxG.width)
+		{
+			kill();
+			trace("Kill right");
+		}
+		else if (velocity.x < 0 && x < SIZE)
+		{
+			kill();
+			trace("Kill left");
+		}
+		else if (velocity.y > 0 && y > FlxG.height)
+		{
+			kill();
+			trace("Kill bottom");
+		}
+		else if (velocity.y < 0 && y < SIZE)
+		{
+			kill();
+			trace("Kill top");
+		}
 	}
 }
