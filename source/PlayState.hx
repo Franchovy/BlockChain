@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxState;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.group.FlxGroup;
 import flixel.input.actions.FlxAction.FlxActionDigital;
 import flixel.input.actions.FlxActionManager;
 import flixel.math.FlxVector;
@@ -11,6 +12,7 @@ import flixel.math.FlxVelocity;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.ui.FlxSpriteButton;
+import flixel.util.FlxCollision;
 import flixel.util.FlxColor;
 
 class PlayState extends FlxState
@@ -21,6 +23,7 @@ class PlayState extends FlxState
 	var blockChainText:FlxText;
 	var startGameText:FlxText;
 	var obstaclesPool:FlxTypedGroup<Obstacle>;
+	var walls:FlxGroup;
 
 	var playerAndEnemy:PlayerEnemyChain;
 	var hud:HUD;
@@ -41,6 +44,8 @@ class PlayState extends FlxState
 			obstacle.kill();
 			obstaclesPool.add(obstacle);
 		}
+
+		walls = FlxCollision.createCameraWall(FlxG.camera, 1);
 
 		// Instantiate Player/Enemy and HUD
 
@@ -130,6 +135,8 @@ class PlayState extends FlxState
 		}
 
 		FlxG.collide(obstaclesPool, playerAndEnemy);
+
+		FlxG.collide(walls, playerAndEnemy.player);
 
 		for (block in playerAndEnemy.blockchain)
 		{
