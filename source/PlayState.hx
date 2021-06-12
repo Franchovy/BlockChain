@@ -20,13 +20,20 @@ class PlayState extends FlxState
 	var menu = true;
 	var game_over = false;
 	var level_clear = false;
-	var blockChainText:FlxText;
-	var startGameText:FlxText;
 	var obstaclesPool:FlxTypedGroup<Obstacle>;
 	var walls:FlxGroup;
 
 	var playerAndEnemy:PlayerEnemyChain;
 	var hud:HUD;
+	// Main Menu Text
+	var blockChainText:FlxText;
+	var startGameText:FlxText;
+	var controlsText:FlxText;
+	var explainText1:FlxText;
+	var explainText2:FlxText;
+	var explainText3:FlxText;
+	var explainText4:FlxText;
+	// Game Over Text
 	var gameOverText:FlxText;
 	var tryAgainText:FlxText;
 
@@ -66,6 +73,36 @@ class PlayState extends FlxState
 		startGameText.y += 80;
 		add(startGameText);
 
+		controlsText = new FlxText(0, 0, 0, "[W,A,S,D] to move. [Space] to power up. [Shift] in emergency.", 16);
+		controlsText.color = FlxColor.fromRGB(230, 230, 230);
+		controlsText.screenCenter();
+		controlsText.y -= 160;
+		add(controlsText);
+
+		var explainFontSize = 19;
+		explainText1 = new FlxText(0, 0, 0, "Don't let ", explainFontSize);
+		explainText1.color = FlxColor.fromRGB(125, 125, 125);
+		add(explainText1);
+		explainText2 = new FlxText(0, 0, 0, "White", explainFontSize);
+		explainText2.color = FlxColor.fromRGB(255, 255, 255);
+		add(explainText2);
+		explainText3 = new FlxText(0, 0, 0, " touch the ", explainFontSize);
+		explainText3.color = FlxColor.fromRGB(125, 125, 125);
+		add(explainText3);
+		explainText4 = new FlxText(0, 0, 0, "Blue", explainFontSize);
+		explainText4.color = FlxColor.BLUE;
+		add(explainText4);
+
+		var totalWidth = explainText1.width + explainText2.width + explainText3.width + explainText4.width;
+		explainText1.x = (FlxG.width - totalWidth) / 2;
+		explainText2.x = explainText1.x + explainText1.width;
+		explainText3.x = explainText2.x + explainText2.width;
+		explainText4.x = explainText3.x + explainText3.width;
+		explainText1.y = controlsText.y + 30;
+		explainText2.y = controlsText.y + 30;
+		explainText3.y = controlsText.y + 30;
+		explainText4.y = controlsText.y + 30;
+
 		gameOverText = new flixel.text.FlxText(0, 0, 0, "Game Over", 64);
 
 		tryAgainText = new FlxText(0, 0, 0, "Press [Space] to try again", 22);
@@ -94,8 +131,15 @@ class PlayState extends FlxState
 
 		startGameText.kill();
 		blockChainText.kill();
+
 		gameOverText.kill();
 		tryAgainText.kill();
+
+		controlsText.alpha = 0.0;
+		explainText1.alpha = 0.0;
+		explainText2.alpha = 0.0;
+		explainText3.alpha = 0.0;
+		explainText4.alpha = 0.0;
 
 		// Add HUD
 
@@ -115,6 +159,12 @@ class PlayState extends FlxState
 		}
 
 		game_over = true;
+
+		controlsText.alpha = 1.0;
+		explainText1.alpha = 1.0;
+		explainText2.alpha = 1.0;
+		explainText3.alpha = 1.0;
+		explainText4.alpha = 1.0;
 
 		gameOverText.reset(0, 0);
 		tryAgainText.reset(0, 0);
