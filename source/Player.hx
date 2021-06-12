@@ -8,7 +8,7 @@ import flixel.util.FlxColor;
 
 class Player extends FlxSprite
 {
-	static inline var TILE_SIZE:Int = 32;
+	public static inline var TILE_SIZE:Int = 32;
 	static inline var SPEED:Float = 300;
 	static inline var MAX_SPEED:Float = 250;
 	static inline var ACCELERATION:Float = 900;

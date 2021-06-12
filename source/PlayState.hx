@@ -12,7 +12,7 @@ class PlayState extends FlxState
 		text.screenCenter();
 		add(text);
 
-		var playerAndEnemy = new PlayerEnemyChain();
+		var playerAndEnemy = new PlayerEnemyChain(7);
 		add(playerAndEnemy);
 
 		var obstacle = new Obstacle();
