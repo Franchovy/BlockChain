@@ -69,7 +69,12 @@ class PlayState extends FlxState
 		startGameText.kill();
 		blockChainText.kill();
 
-		var playerAndEnemy = new PlayerEnemyChain(7);
+		// Add HUD
+
+		var hud = new HUD();
+		add(hud);
+
+		var playerAndEnemy = new PlayerEnemyChain(7, hud);
 		add(playerAndEnemy);
 	}
 

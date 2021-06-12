@@ -21,6 +21,8 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 	var ENEMY_SIZE:Int = 25;
 	var BLOCK_SIZE:Int = 15;
 
+	var hud:HUD;
+
 	var player:Player;
 	var enemy:Enemy;
 
@@ -30,8 +32,10 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 	var shiftInput:FlxActionDigital;
 	var spaceInput:FlxActionDigital;
 
-	public function new(numBlocks:Int)
+	public function new(numBlocks:Int, hud:HUD)
 	{
+		this.hud = hud;
+
 		super();
 
 		player = new Player(100, 100);
@@ -141,6 +145,8 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 		{
 			power = 0.0;
 		}
+
+		hud.setPower(Math.floor(10 * Math.pow(1.5, power)));
 
 		var extraSpeed = Math.pow(1.1, power);
 
