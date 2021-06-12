@@ -93,6 +93,8 @@ class PlayState extends FlxState
 			return;
 		}
 
+		FlxG.collide(blockchain, obstaclesPool);
+
 		// 1 out of 10 chance of spawning block per second.
 		if (Random.float(0, 10.0) * elapsedSinceLastSpawn > 9)
 		{
