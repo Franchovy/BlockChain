@@ -75,6 +75,9 @@ class Player extends FlxSprite
 
 	static inline var ACC_DRAG = 0.9;
 	static inline var VEL_DRAG = 0.9;
+	static inline var DIAGONAL_MOD = 0.707;
+
+	var isMovingDiagonal = false;
 
 	override public function update(elapsed:Float):Void
 	{
@@ -114,6 +117,12 @@ class Player extends FlxSprite
 				cooldown_elapsed = 0.0;
 			}
 		}
+
+		if (acceleration.x != 0 && acceleration.y != 0)
+		{
+			acceleration.x *= DIAGONAL_MOD;
+			acceleration.y *= DIAGONAL_MOD;
+		}
 	}
 
 	static inline var BOOST_SPEED = 40000;
@@ -133,8 +142,7 @@ class Player extends FlxSprite
 		{
 			acceleration.y = BOOST_SPEED;
 		}
-
-		if (right.triggered && !left.triggered)
+		else if (right.triggered && !left.triggered)
 		{
 			acceleration.x = BOOST_SPEED;
 		}
