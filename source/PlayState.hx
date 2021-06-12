@@ -27,6 +27,8 @@ class PlayState extends FlxState
 
 	var playerAndEnemy:PlayerEnemyChain;
 	var hud:HUD;
+	var gameOverText:FlxText;
+	var tryAgainText:FlxText;
 
 	var spaceInput:FlxActionDigital;
 
@@ -50,7 +52,7 @@ class PlayState extends FlxState
 		// Instantiate Player/Enemy and HUD
 
 		hud = new HUD();
-		playerAndEnemy = new PlayerEnemyChain(7, hud);
+		playerAndEnemy = new PlayerEnemyChain(hud);
 
 		// Add menu text
 
@@ -64,6 +66,11 @@ class PlayState extends FlxState
 		startGameText.y += 80;
 		add(startGameText);
 
+		gameOverText = new flixel.text.FlxText(0, 0, 0, "Game Over", 64);
+
+		tryAgainText = new FlxText(0, 0, 0, "Press [Space] to try again", 22);
+		tryAgainText.color = FlxColor.fromRGB(200, 200, 200);
+
 		// Add Space key input
 
 		spaceInput = new FlxActionDigital();
@@ -72,21 +79,51 @@ class PlayState extends FlxState
 
 	function startGame()
 	{
-		if (!menu)
+		if (!menu && !game_over)
 		{
 			return;
 		}
 
 		menu = false;
+		game_over = false;
+
+		for (obstacle in obstaclesPool)
+		{
+			obstacle.kill();
+		}
 
 		startGameText.kill();
 		blockChainText.kill();
+		gameOverText.kill();
+		tryAgainText.kill();
 
 		// Add HUD
 
-		add(hud);
+		hud.recycle();
 
+		add(hud);
 		add(playerAndEnemy);
+
+		playerAndEnemy.setupStart();
+	}
+
+	function setGameOver()
+	{
+		if (game_over)
+		{
+			return;
+		}
+
+		game_over = true;
+
+		gameOverText.reset(0, 0);
+		tryAgainText.reset(0, 0);
+		gameOverText.screenCenter();
+		tryAgainText.screenCenter();
+		tryAgainText.y += 80;
+
+		add(gameOverText);
+		add(tryAgainText);
 	}
 
 	var elapsedSinceLastSpawn:Float = 0;
@@ -96,7 +133,7 @@ class PlayState extends FlxState
 		spaceInput.update();
 		super.update(elapsed);
 
-		if (menu)
+		if (menu || game_over)
 		{
 			if (spaceInput.triggered)
 			{
@@ -125,9 +162,9 @@ class PlayState extends FlxState
 			{
 				if (FlxG.overlap(obstacle, playerAndEnemy.player))
 				{
-					game_over = true;
-					playerAndEnemy.kill();
-					// TODO: Implement try again after game over
+					playerAndEnemy.death();
+
+					setGameOver();
 				}
 				for (block in playerAndEnemy.blockchain)
 				{

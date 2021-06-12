@@ -33,16 +33,22 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 	var shiftInput:FlxActionDigital;
 	var spaceInput:FlxActionDigital;
 
-	public function new(numBlocks:Int, hud:HUD)
+	static var NUM_BLOCKS_START = 7;
+	static var PLAYER_START_X = 100;
+	static var PLAYER_START_Y = 100;
+	static var ENEMY_START_X = 200;
+	static var ENEMY_START_Y = 200;
+
+	public function new(hud:HUD)
 	{
 		this.hud = hud;
 
 		super();
 
-		player = new Player(100, 100);
-		enemy = new Enemy(200, 200);
+		player = new Player(PLAYER_START_X, PLAYER_START_Y);
+		enemy = new Enemy(ENEMY_START_X, ENEMY_START_Y);
 
-		this.numBlocks = numBlocks;
+		this.numBlocks = NUM_BLOCKS_START;
 
 		// Instatiate blocks in chain
 		blockchain = new List<ChainBlock>();
@@ -69,6 +75,40 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 
 		spaceInput = new FlxActionDigital();
 		spaceInput.addKey(SPACE, PRESSED);
+	}
+
+	public function setupStart()
+	{
+		numBlocks = NUM_BLOCKS_START;
+		player.reset(PLAYER_START_X, PLAYER_START_Y);
+		player.setupStart();
+		enemy.reset(ENEMY_START_X, ENEMY_START_Y);
+
+		var blockCount = 0;
+		for (block in blockchain)
+		{
+			block.setupStart();
+			blockCount++;
+
+			if (blockCount < numBlocks)
+			{
+				block.reset(0, 0);
+			}
+			else
+			{
+				block.kill();
+			}
+		}
+		positionBlocks();
+	}
+
+	public function death()
+	{
+		for (block in blockchain)
+		{
+			block.disable();
+			player.disable();
+		}
 	}
 
 	private function positionBlocks()

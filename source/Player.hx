@@ -33,6 +33,8 @@ class Player extends FlxSprite
 
 	static var actions:FlxActionManager;
 
+	var isDisabled = false;
+
 	public function new(X:Int, Y:Int)
 	{
 		// X,Y: Starting coordinates
@@ -42,6 +44,19 @@ class Player extends FlxSprite
 		makeGraphic(TILE_SIZE, TILE_SIZE, FlxColor.WHITE);
 
 		addInputs();
+	}
+
+	public function setupStart()
+	{
+		makeGraphic(TILE_SIZE, TILE_SIZE, FlxColor.WHITE);
+		isDisabled = false;
+	}
+
+	public function disable()
+	{
+		makeGraphic(TILE_SIZE, TILE_SIZE, FlxColor.fromRGB(255, 180, 180));
+
+		isDisabled = true;
 	}
 
 	function addInputs():Void
@@ -82,6 +97,9 @@ class Player extends FlxSprite
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
+
+		if (isDisabled)
+			return;
 
 		acceleration.x = -acceleration.x * ACC_DRAG;
 		acceleration.y = -acceleration.y * ACC_DRAG;

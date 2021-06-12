@@ -20,6 +20,10 @@ class Obstacle extends FlxSprite
 
 	public function spawn()
 	{
+		hasBeenTouchedEnemy = false;
+
+		makeGraphic(SIZE, SIZE, FlxColor.BLUE);
+
 		if (Random.bool())
 		{
 			// Along top or bottom of the screen
