@@ -136,6 +136,7 @@ class PlayState extends FlxState
 			if (FlxG.overlap(obstaclesPool, block))
 			{
 				playerAndEnemy.loseBlock(block);
+				block.disable();
 			}
 		}
 

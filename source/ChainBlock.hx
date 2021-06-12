@@ -13,4 +13,9 @@ class ChainBlock extends FlxSprite
 
 		makeGraphic(TILE_SIZE, TILE_SIZE, FlxColor.GRAY);
 	}
+
+	public function disable()
+	{
+		makeGraphic(TILE_SIZE, TILE_SIZE, FlxColor.fromRGB(150, 70, 70));
+	}
 }
