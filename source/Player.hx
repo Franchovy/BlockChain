@@ -10,7 +10,7 @@ class Player extends FlxSprite
 {
 	public static inline var TILE_SIZE:Int = 32;
 	static inline var SPEED:Float = 300;
-	static inline var MAX_SPEED:Float = 250;
+	static inline var MAX_SPEED:Float = 300;
 	static inline var ACCELERATION:Float = 900;
 	static inline var BRAKE_MULTIPLIER:Float = 10;
 

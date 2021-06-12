@@ -5,11 +5,11 @@ import flixel.util.FlxColor;
 
 class ChainBlock extends FlxSprite
 {
-	static inline var TILE_SIZE = 20;
+	public static inline var TILE_SIZE = 20;
 
-	public function new(X:Float, Y:Float)
+	public function new()
 	{
-		super(X, Y);
+		super();
 
 		makeGraphic(TILE_SIZE, TILE_SIZE, FlxColor.GRAY);
 	}

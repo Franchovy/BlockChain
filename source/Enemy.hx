@@ -8,7 +8,7 @@ import flixel.util.FlxColor;
 
 class Enemy extends FlxSprite
 {
-	static inline var TILE_SIZE:Int = 30;
+	public static inline var TILE_SIZE:Int = 30;
 	static var actions:FlxActionManager;
 
 	public function new(X:Int, Y:Int)

@@ -32,35 +32,52 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 		this.numBlocks = numBlocks;
 
 		// Instatiate blocks in chain
-		var dx = enemy.x - player.x;
-		var dy = enemy.y - player.y;
-
 		blockchain = new List<ChainBlock>();
 		for (i in 0...numBlocks)
 		{
 			var startPosX = player.x + Player.TILE_SIZE / 2;
 			var startPosY = player.y + Player.TILE_SIZE / 2;
 
-			var block = new ChainBlock(startPosX + dx / numBlocks * i, startPosY + dy / numBlocks * i);
+			var block = new ChainBlock();
 			blockchain.add(block);
 			add(block);
 		}
 
+		positionBlocks();
+
 		add(player);
 		add(enemy);
+	}
+
+	private function positionBlocks()
+	{
+		var i = 1;
+		var n = numBlocks + 1;
+
+		for (block in blockchain)
+		{
+			var startPosX = player.x + Player.TILE_SIZE / 2 - ChainBlock.TILE_SIZE;
+			var startPosY = player.y + Player.TILE_SIZE / 2 - ChainBlock.TILE_SIZE;
+			var endPosX = enemy.x + (ChainBlock.TILE_SIZE - Enemy.TILE_SIZE) / 2;
+			var endPosY = enemy.y + (ChainBlock.TILE_SIZE - Enemy.TILE_SIZE) / 2;
+
+			var dx = endPosX - startPosX;
+			var dy = endPosY - startPosY;
+
+			block.x = startPosX + dx / n * i + ChainBlock.TILE_SIZE / 2;
+			block.y = startPosY + dy / n * i + ChainBlock.TILE_SIZE / 2;
+
+			i++;
+		}
 	}
 
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
 
-		enemy.velocity.x = player.velocity.x;
-		enemy.velocity.y = player.velocity.y;
+		enemy.velocity.x = player.velocity.x / 2;
+		enemy.velocity.y = player.velocity.y / 2;
 
-		for (block in blockchain)
-		{
-			block.velocity.x = player.velocity.x;
-			block.velocity.y = player.velocity.y;
-		}
+		positionBlocks();
 	}
 }
