@@ -6,6 +6,8 @@ import flixel.FlxState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.input.actions.FlxAction.FlxActionDigital;
 import flixel.input.actions.FlxActionManager;
+import flixel.math.FlxVector;
+import flixel.math.FlxVelocity;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.ui.FlxSpriteButton;
@@ -96,6 +98,24 @@ class PlayState extends FlxState
 				startGame();
 			}
 		}
+
+		// If enemy is nearby to an obstacle, accelerate towards it
+		obstaclesPool.forEachAlive(function(obstacle)
+		{
+			if (FlxG.overlap(obstacle, playerAndEnemy.enemy))
+			{
+				// Touch happened
+				obstacle.onTouchEnemy();
+			}
+			else if (!obstacle.hasBeenTouchedEnemy)
+			{
+				var obstaclePos = obstacle.getPosition();
+				if (obstaclePos.distanceTo(playerAndEnemy.enemy.getPosition()) < 10)
+				{
+					FlxVelocity.accelerateTowardsObject(playerAndEnemy.enemy, obstacle, 100000, 100000);
+				}
+			}
+		});
 
 		if (FlxG.overlap(obstaclesPool, playerAndEnemy.player))
 		{

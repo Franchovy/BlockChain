@@ -43,4 +43,13 @@ class Obstacle extends FlxSprite
 		if (!isOnScreen())
 			kill();
 	}
+
+	public var hasBeenTouchedEnemy = false;
+
+	public function onTouchEnemy()
+	{
+		hasBeenTouchedEnemy = true;
+
+		makeGraphic(SIZE, SIZE, FlxColor.fromRGB(150, 150, 255));
+	}
 }
