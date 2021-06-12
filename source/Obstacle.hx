@@ -44,30 +44,21 @@ class Obstacle extends FlxSprite
 	{
 		super.update(elapsed);
 
-		trace("Velocity X:");
-		trace(velocity.x);
-		trace("Velocity Y:");
-		trace(velocity.y);
-
 		if (velocity.x > 0 && x > FlxG.width)
 		{
 			kill();
-			trace("Kill right");
 		}
 		else if (velocity.x < 0 && x < SIZE)
 		{
 			kill();
-			trace("Kill left");
 		}
 		else if (velocity.y > 0 && y > FlxG.height)
 		{
 			kill();
-			trace("Kill bottom");
 		}
 		else if (velocity.y < 0 && y < SIZE)
 		{
 			kill();
-			trace("Kill top");
 		}
 	}
 }

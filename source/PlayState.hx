@@ -46,13 +46,6 @@ class PlayState extends FlxState
 			add(obstacle);
 			obstacle.spawn();
 
-			trace("Spawning obstacle");
-
-			trace("X: ");
-			trace(obstacle.x);
-			trace("Y: ");
-			trace(obstacle.y);
-
 			elapsedSinceLastSpawn = 0;
 		}
 		else
