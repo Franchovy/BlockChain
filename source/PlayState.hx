@@ -15,8 +15,9 @@ class PlayState extends FlxState
 		var playerAndEnemy = new PlayerEnemyChain();
 		add(playerAndEnemy);
 
-		var obstacle = new Obstacle();
-		add(obstacle);
+		// TODO: Prevent obstacles overlapping one another
+		for (i in 0...3)
+			add(new Obstacle());
 	}
 
 	override public function update(elapsed:Float)
