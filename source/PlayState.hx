@@ -21,6 +21,7 @@ class PlayState extends FlxState
 	var obstaclesPool:FlxTypedGroup<Obstacle>;
 
 	var playerAndEnemy:PlayerEnemyChain;
+	var hud:HUD;
 
 	var spaceInput:FlxActionDigital;
 
@@ -38,6 +39,11 @@ class PlayState extends FlxState
 			obstacle.kill();
 			obstaclesPool.add(obstacle);
 		}
+
+		// Instantiate Player/Enemy and HUD
+
+		hud = new HUD();
+		playerAndEnemy = new PlayerEnemyChain(7, hud);
 
 		// Add menu text
 
@@ -71,10 +77,7 @@ class PlayState extends FlxState
 
 		// Add HUD
 
-		var hud = new HUD();
 		add(hud);
-
-		var playerAndEnemy = new PlayerEnemyChain(7, hud);
 
 		add(playerAndEnemy);
 	}
