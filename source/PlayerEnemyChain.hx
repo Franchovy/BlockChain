@@ -84,6 +84,16 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 		player.setupStart();
 		enemy.reset(ENEMY_START_X, ENEMY_START_Y);
 
+		blockchain.clear();
+		for (m in members)
+		{
+			if (m is ChainBlock)
+			{
+				var chainBlock = cast(m, ChainBlock);
+				blockchain.add(chainBlock);
+			}
+		}
+
 		var blockCount = 0;
 		for (block in blockchain)
 		{
