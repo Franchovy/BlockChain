@@ -3,9 +3,7 @@ package;
 import Random;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.math.FlxPoint;
 import flixel.util.FlxColor;
-import flixel.util.FlxPath;
 
 class Obstacle extends FlxSprite
 {

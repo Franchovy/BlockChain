@@ -23,7 +23,8 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 
 	var hud:HUD;
 
-	var player:Player;
+	public var player:Player;
+
 	var enemy:Enemy;
 
 	var numBlocks:Int;
