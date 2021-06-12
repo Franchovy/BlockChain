@@ -20,8 +20,9 @@ class PlayState extends FlxState
 	var menu = true;
 	var game_over = false;
 	var level_clear = false;
-	var obstaclesPool:FlxTypedGroup<Obstacle>;
+	var obstaclesPool:FlxTypedGroup<SlowObstacle>;
 	var walls:FlxGroup;
+	var fastObstacle:FastObstacle;
 
 	var playerAndEnemy:PlayerEnemyChain;
 	var hud:HUD;
@@ -46,15 +47,16 @@ class PlayState extends FlxState
 		// Add moving blocks
 
 		var poolSize = 30;
-		obstaclesPool = new FlxTypedGroup<Obstacle>(poolSize);
+		obstaclesPool = new FlxTypedGroup<SlowObstacle>(poolSize);
 		for (_ in 0...poolSize)
 		{
-			var obstacle = new Obstacle();
+			var obstacle = new SlowObstacle();
 			obstacle.kill();
 			obstaclesPool.add(obstacle);
 		}
 
 		walls = FlxCollision.createCameraWall(FlxG.camera, 1);
+		fastObstacle = new FastObstacle();
 
 		// Instantiate Player/Enemy and HUD
 
@@ -238,11 +240,19 @@ class PlayState extends FlxState
 		// 1 out of 10 chance of spawning block per second.
 		if (Random.float(0, 10.0) * elapsedSinceLastSpawn > 9)
 		{
-			var obstacle = obstaclesPool.recycle(Obstacle);
-
-			add(obstacle);
-			obstacle.spawn();
-
+			// 1 out of 10 chance of that block being a fast moving block.
+			if (!fastObstacle.alive && Random.float(0, 10.0) > 9)
+			{
+				fastObstacle.revive();
+				add(fastObstacle);
+				fastObstacle.spawn();
+			}
+			else
+			{
+				var obstacle = obstaclesPool.recycle(SlowObstacle);
+				add(obstacle);
+				obstacle.spawn();
+			}
 			elapsedSinceLastSpawn = 0;
 		}
 		else
