@@ -120,14 +120,25 @@ class PlayState extends FlxState
 					FlxVelocity.accelerateTowardsObject(playerAndEnemy.enemy, obstacle, 100000, 100000);
 				}
 			}
-		});
 
-		if (FlxG.overlap(obstaclesPool, playerAndEnemy.player))
-		{
-			game_over = true;
-			playerAndEnemy.kill();
-			// TODO: Implement try again after game over
-		}
+			if (!obstacle.hasBeenTouchedEnemy)
+			{
+				if (FlxG.overlap(obstacle, playerAndEnemy.player))
+				{
+					game_over = true;
+					playerAndEnemy.kill();
+					// TODO: Implement try again after game over
+				}
+				for (block in playerAndEnemy.blockchain)
+				{
+					if (FlxG.overlap(obstacle, block))
+					{
+						playerAndEnemy.loseBlock(block);
+						block.disable();
+					}
+				}
+			}
+		});
 
 		if (level_clear || game_over)
 		{
@@ -135,17 +146,7 @@ class PlayState extends FlxState
 		}
 
 		FlxG.collide(obstaclesPool, playerAndEnemy);
-
 		FlxG.collide(walls, playerAndEnemy.player);
-
-		for (block in playerAndEnemy.blockchain)
-		{
-			if (FlxG.overlap(obstaclesPool, block))
-			{
-				playerAndEnemy.loseBlock(block);
-				block.disable();
-			}
-		}
 
 		// 1 out of 10 chance of spawning block per second.
 		if (Random.float(0, 10.0) * elapsedSinceLastSpawn > 9)
