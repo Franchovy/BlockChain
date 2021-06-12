@@ -5,6 +5,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
+import flixel.input.FlxInput;
 import flixel.input.actions.FlxAction.FlxActionDigital;
 import flixel.input.actions.FlxActionManager;
 import flixel.math.FlxAngle;
@@ -25,6 +26,9 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 
 	var numBlocks:Int;
 	var blockchain:List<ChainBlock>;
+
+	var shiftInput:FlxActionDigital;
+	var spaceInput:FlxActionDigital;
 
 	public function new(numBlocks:Int)
 	{
@@ -47,10 +51,19 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 			add(block);
 		}
 
+		// Position blocks that make up the chain
 		positionBlocks();
 
+		// Add to screen
 		add(player);
 		add(enemy);
+
+		// Add space and shift controls
+		shiftInput = new FlxActionDigital();
+		shiftInput.addKey(SHIFT, PRESSED);
+
+		spaceInput = new FlxActionDigital();
+		spaceInput.addKey(SPACE, PRESSED);
 	}
 
 	private function positionBlocks()
@@ -68,8 +81,19 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 			var dx = endPosX - startPosX;
 			var dy = endPosY - startPosY;
 
-			block.x = startPosX + dx / n * i + ChainBlock.TILE_SIZE / 2;
-			block.y = startPosY + dy / n * i + ChainBlock.TILE_SIZE / 2;
+			var targetX = startPosX + dx / n * i + ChainBlock.TILE_SIZE / 2;
+			var targetY = startPosY + dy / n * i + ChainBlock.TILE_SIZE / 2;
+
+			var targetPoint = new FlxPoint(targetX, targetY);
+			var targetDistance = targetPoint.distanceTo(block.getPosition());
+
+			var extraSpeedForBlocksNearPlayerOrEnemy = cast(Math.min(n - i, i), Int);
+			var extraSpeed = extraSpeedForBlocksNearPlayerOrEnemy < 3 ? [3.0, 2.0, 1.5,][extraSpeedForBlocksNearPlayerOrEnemy] : 1.0;
+
+			if (targetDistance > 1)
+			{
+				FlxVelocity.moveTowardsPoint(block, targetPoint, extraSpeed * Math.pow(targetDistance, 1.5 * Math.pow(1.1, power)));
+			}
 
 			i++;
 		}
@@ -80,36 +104,47 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 	var ENEMY_MAX_SPEED = 10000;
 	var ENEMY_DRAG = 0.9;
 
+	var MAX_POWER = 2.0;
+	var power = 0.0;
+
 	override public function update(elapsed:Float):Void
 	{
-		super.update(elapsed);
+		shiftInput.update();
+		spaceInput.update();
 
-		// var playerVelocityAngle = Math.atan2(player.velocity.y, player.velocity.x);
-		// trace("Player velocity angle: "); // √
-		// trace(playerVelocityAngle / (Math.PI * 2) * 360);
-		// var enemyToPlayerAngle = Math.PI - Math.atan2(enemy.y - player.y, enemy.x - player.x);
-		// trace("Enemy to player angle: "); // √
-		// trace(enemyToPlayerAngle / (Math.PI * 2) * 360);
+		super.update(elapsed);
 
 		var enemyPlayerDistanceX = player.x - enemy.x;
 		var enemyPlayerDistanceY = player.y - enemy.y;
 		var enemyPlayerDistanceVector = new FlxPoint(enemyPlayerDistanceX, enemyPlayerDistanceY);
 
-		if (cast(enemyPlayerDistanceVector, FlxVector).length > chainDistance)
+		var enemyPos = new FlxPoint(enemy.x, enemy.y);
+		var playerPos = new FlxPoint(player.x, player.y);
+
+		var angle = playerPos.angleBetween(enemyPos);
+
+		// Speed up spinning if space is pressed
+		if (spaceInput.triggered)
 		{
-			// Accelerate
-			FlxVelocity.accelerateTowardsObject(enemy, player, ENEMY_ACCELERATION, ENEMY_MAX_SPEED);
-			trace("Accelerating");
+			if (power == 0)
+			{
+				power = 0.2;
+			}
+			else if (power < MAX_POWER)
+			{
+				power += 0.1 * (1 / power);
+			}
 		}
 		else
 		{
-			enemy.acceleration.x = -enemy.acceleration.x / 2;
-			enemy.acceleration.y = -enemy.acceleration.y / 2;
-			enemy.velocity.x = enemy.velocity.x * ENEMY_DRAG;
-			enemy.velocity.y = enemy.velocity.y * ENEMY_DRAG;
-
-			trace("Slowing down");
+			power = 0.0;
 		}
+
+		var targetRelativeToPlayer = FlxVelocity.velocityFromAngle(angle, chainDistance * Math.pow(1.1, power));
+
+		var targetDistance = targetRelativeToPlayer.distanceTo(new FlxPoint(0, 0));
+
+		FlxVelocity.moveTowardsPoint(enemy, playerPos.addPoint(targetRelativeToPlayer), Math.pow(targetDistance, 1.1 * Math.pow(1.1, power)));
 
 		positionBlocks();
 	}
