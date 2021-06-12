@@ -92,7 +92,7 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 
 			if (targetDistance > 1)
 			{
-				FlxVelocity.moveTowardsPoint(block, targetPoint, extraSpeed * Math.pow(targetDistance, 1.5 * Math.pow(1.1, power)));
+				FlxVelocity.moveTowardsPoint(block, targetPoint, extraSpeed * Math.pow(targetDistance, Math.max(Math.sqrt(power), 1.5)));
 			}
 
 			i++;
@@ -104,7 +104,7 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 	var ENEMY_MAX_SPEED = 10000;
 	var ENEMY_DRAG = 0.9;
 
-	var MAX_POWER = 2.0;
+	var MAX_POWER = 4.0;
 	var power = 0.0;
 
 	override public function update(elapsed:Float):Void
@@ -132,7 +132,7 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 			}
 			else if (power < MAX_POWER)
 			{
-				power += 0.1 * (1 / power);
+				power *= 1.1;
 			}
 
 			angle -= 15;
@@ -148,9 +148,9 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 		if (shiftInput.triggered)
 		{
 			chainDistance = 150;
-			extraSpeed += 1.0;
 
-			angle += 45;
+			angle += 75;
+			extraSpeed += 2.0;
 		}
 		else
 		{
