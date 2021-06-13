@@ -47,7 +47,7 @@ class Obstacle extends FlxSprite
 	public function go()
 	{
 		if (_isVertical)
-			velocity.set(0, y > 0 ? _speed : _speed);
+			velocity.set(0, y > 0 ? -_speed : _speed);
 		else
 			velocity.set(x > 0 ? -_speed : _speed, 0);
 	}
