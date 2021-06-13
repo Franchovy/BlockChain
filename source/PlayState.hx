@@ -189,6 +189,39 @@ class PlayState extends FlxState
 
 	var elapsedSinceLastSpawn:Float = 0;
 
+	private function handleObstacle(obstacle:Obstacle)
+	{
+		if (FlxG.overlap(obstacle, playerAndEnemy.enemy))
+		{
+			// Touch happened
+			obstacle.onTouchEnemy();
+		}
+		else if (!obstacle.hasBeenTouchedEnemy)
+		{
+			var obstaclePos = obstacle.getPosition();
+			if (obstaclePos.distanceTo(playerAndEnemy.enemy.getPosition()) < 10)
+			{
+				FlxVelocity.accelerateTowardsObject(playerAndEnemy.enemy, obstacle, 100000, 100000);
+			}
+		}
+		if (!obstacle.hasBeenTouchedEnemy)
+		{
+			if (FlxG.overlap(obstacle, playerAndEnemy.player))
+			{
+				playerAndEnemy.death();
+				setGameOver();
+			}
+			for (block in playerAndEnemy.blockchain)
+			{
+				if (FlxG.overlap(obstacle, block))
+				{
+					playerAndEnemy.loseBlock(block);
+					block.disable();
+				}
+			}
+		}
+	}
+
 	override public function update(elapsed:Float)
 	{
 		spaceInput.update();
@@ -203,40 +236,8 @@ class PlayState extends FlxState
 		}
 
 		// If enemy is nearby to an obstacle, accelerate towards it
-		obstaclesPool.forEachAlive(function(obstacle)
-		{
-			if (FlxG.overlap(obstacle, playerAndEnemy.enemy))
-			{
-				// Touch happened
-				obstacle.onTouchEnemy();
-			}
-			else if (!obstacle.hasBeenTouchedEnemy)
-			{
-				var obstaclePos = obstacle.getPosition();
-				if (obstaclePos.distanceTo(playerAndEnemy.enemy.getPosition()) < 10)
-				{
-					FlxVelocity.accelerateTowardsObject(playerAndEnemy.enemy, obstacle, 100000, 100000);
-				}
-			}
-
-			if (!obstacle.hasBeenTouchedEnemy)
-			{
-				if (FlxG.overlap(obstacle, playerAndEnemy.player))
-				{
-					playerAndEnemy.death();
-
-					setGameOver();
-				}
-				for (block in playerAndEnemy.blockchain)
-				{
-					if (FlxG.overlap(obstacle, block))
-					{
-						playerAndEnemy.loseBlock(block);
-						block.disable();
-					}
-				}
-			}
-		});
+		obstaclesPool.forEachAlive(handleObstacle);
+		handleObstacle(fastObstacle);
 
 		if (level_clear || game_over)
 		{
@@ -244,6 +245,7 @@ class PlayState extends FlxState
 		}
 
 		FlxG.collide(obstaclesPool, playerAndEnemy);
+		FlxG.collide(fastObstacle, playerAndEnemy);
 		FlxG.collide(walls, playerAndEnemy.player);
 
 		// 1 out of 10 chance of spawning block per second.

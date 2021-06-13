@@ -8,7 +8,7 @@ class FastObstacle extends Obstacle
 
 	public function new()
 	{
-		super(800, FlxColor.ORANGE);
+		super(1000, FlxColor.ORANGE);
 		kill();
 	}
 
@@ -16,21 +16,21 @@ class FastObstacle extends Obstacle
 	{
 		super.spawn();
 		_elapsedSinceSpawn++;
-		// TODO: Warn the player of the incoming obstacle
+		// Peak out to warn the player of the incoming obstacle
+		if (_isVertical)
+			velocity.set(0, y > 0 ? -5 : 5);
+		else
+			velocity.set(x > 0 ? -5 : 5, 0);
 	}
 
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
 
-		if (_elapsedSinceSpawn > 0)
+		if (_elapsedSinceSpawn > 0 && ++_elapsedSinceSpawn > 100)
 		{
-			_elapsedSinceSpawn++;
-			if (_elapsedSinceSpawn > 200)
-			{
-				go();
-				_elapsedSinceSpawn = 0;
-			}
+			go();
+			_elapsedSinceSpawn = 0;
 		}
 	}
 }
