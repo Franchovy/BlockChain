@@ -10,6 +10,7 @@ import flixel.input.actions.FlxActionManager;
 import flixel.math.FlxVector;
 import flixel.math.FlxVelocity;
 import flixel.system.FlxAssets;
+import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.ui.FlxSpriteButton;
@@ -41,12 +42,40 @@ class PlayState extends FlxState
 
 	var spaceInput:FlxActionDigital;
 
+	var menuMusic:FlxSound;
+	var gameMusic:FlxSound;
+
 	override public function create()
 	{
 		super.create();
 
 		// Play music
-		FlxG.sound.playMusic(FlxAssets.getSound("assets/music/menu_music"));
+		menuMusic = FlxG.sound.load(FlxAssets.getSound("assets/music/menu_music"));
+		menuMusic.looped = true;
+		menuMusic.onComplete = function()
+		{
+			if (!menu && !game_over)
+			{
+				menuMusic.looped = false;
+				gameMusic.looped = true;
+				gameMusic.play();
+			}
+		}
+
+		// TODO: Split game music by verse so we return to menu music sooner on game over
+		gameMusic = FlxG.sound.load(FlxAssets.getSound("assets/music/game_music"));
+		gameMusic.looped = true;
+		gameMusic.onComplete = function()
+		{
+			if (menu || game_over)
+			{
+				gameMusic.looped = false;
+				menuMusic.looped = true;
+				menuMusic.play();
+			}
+		}
+
+		menuMusic.play();
 
 		// Add moving blocks
 
@@ -165,8 +194,6 @@ class PlayState extends FlxState
 
 		playerAndEnemy.setupStart();
 
-		// FlxG.sound.music.kill();
-		FlxG.sound.playMusic(FlxAssets.getSound("assets/music/game_music"));
 		FlxG.sound.play("assets/sounds/game_start.wav");
 	}
 
@@ -176,8 +203,6 @@ class PlayState extends FlxState
 		{
 			return;
 		}
-
-		FlxG.sound.playMusic(FlxAssets.getSound("assets/music/menu_music"));
 
 		game_over = true;
 
