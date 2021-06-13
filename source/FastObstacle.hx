@@ -1,5 +1,6 @@
 package;
 
+import flixel.FlxG;
 import flixel.util.FlxColor;
 
 class FastObstacle extends Obstacle
@@ -26,6 +27,8 @@ class FastObstacle extends Obstacle
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
+		FlxG.sound.play("assets/sounds/gold_launch.wav");
 
 		if (_elapsedSinceSpawn > 0 && ++_elapsedSinceSpawn > 100)
 		{

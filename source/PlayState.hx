@@ -167,6 +167,7 @@ class PlayState extends FlxState
 
 		// FlxG.sound.music.kill();
 		FlxG.sound.playMusic(FlxAssets.getSound("assets/music/game_music"));
+		FlxG.sound.play("assets/sounds/game_start.wav");
 	}
 
 	function setGameOver()
@@ -217,6 +218,7 @@ class PlayState extends FlxState
 		{
 			if (FlxG.overlap(obstacle, playerAndEnemy.player))
 			{
+				FlxG.sound.play("assets/sounds/dead.wav");
 				playerAndEnemy.death();
 				setGameOver();
 			}

@@ -71,6 +71,18 @@ class Obstacle extends FlxSprite
 
 	public function onTouchEnemy()
 	{
+		if (!hasBeenTouchedEnemy)
+		{
+			if (this is FastObstacle)
+			{
+				FlxG.sound.play("assets/sounds/gold_hit_by_red.wav");
+			}
+			else
+			{
+				FlxG.sound.play("assets/sounds/red-hit-blue.wav");
+			}
+		}
+
 		hasBeenTouchedEnemy = true;
 
 		makeGraphic(SIZE, SIZE, FlxColor.fromRGB(150, 150, 255));

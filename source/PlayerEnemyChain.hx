@@ -158,8 +158,13 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 	public function loseBlock(block:ChainBlock)
 	{
 		block.disable();
-		block.alive = false;
 
+		if (block.alive)
+		{
+			FlxG.sound.play("assets/sounds/lose_grey.wav");
+		}
+
+		block.alive = false;
 		numBlocks = blockchain.countLiving();
 	}
 
@@ -170,6 +175,8 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 		newBlock.setupStart();
 		newBlock.alive = true;
 		newBlock.reset(player.x, player.y);
+
+		FlxG.sound.play("assets/sounds/new_grey.wav");
 
 		numBlocks = blockchain.countLiving();
 	}
