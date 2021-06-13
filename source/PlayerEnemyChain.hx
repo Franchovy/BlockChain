@@ -30,6 +30,7 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 
 	public var blockchain:FlxTypedGroup<ChainBlock>;
 
+	//
 	var shiftInput:FlxActionDigital;
 	var spaceInput:FlxActionDigital;
 
@@ -39,6 +40,14 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 	static var PLAYER_START_Y = 100;
 	static var ENEMY_START_X = 200;
 	static var ENEMY_START_Y = 200;
+
+	static var DEFAULT_POWER = 10;
+	static var POWER_PER_BLOCK = 5;
+
+	// Power gauge decides a few different variables
+	var powerGauge:Float;
+	// Effective power ensures a smooth transition to new power value
+	var effectivePower:Float;
 
 	public function new(hud:HUD)
 	{
@@ -86,6 +95,9 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 		player.setupStart();
 		enemy.kill();
 		enemy.reset(ENEMY_START_X, ENEMY_START_Y);
+
+		DEFAULT_POWER = POWER_PER_BLOCK * numBlocks;
+		powerGauge = DEFAULT_POWER;
 
 		var blockCount = 0;
 		for (block in blockchain)
@@ -145,7 +157,7 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 
 			if (targetDistance > 1)
 			{
-				FlxVelocity.moveTowardsPoint(block, targetPoint, extraSpeed * Math.pow(targetDistance, Math.max(Math.sqrt(power), 1.5)));
+				FlxVelocity.moveTowardsPoint(block, targetPoint, extraSpeed * targetDistance * 10);
 			}
 
 			i++;
@@ -164,6 +176,9 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 
 		block.alive = false;
 		numBlocks = blockchain.countLiving();
+
+		powerGauge -= Math.max(POWER_PER_BLOCK, 0);
+		DEFAULT_POWER = numBlocks * POWER_PER_BLOCK;
 	}
 
 	public function addBlock()
@@ -183,14 +198,18 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 		FlxG.sound.play("assets/sounds/new_grey.wav");
 
 		numBlocks = blockchain.countLiving();
+
+		powerGauge += Math.min(3, 100);
+		DEFAULT_POWER = numBlocks * POWER_PER_BLOCK;
 	}
 
-	var chainDistance = 250;
+	var DIST_POW_MULTIPLIER = 3.0;
+	var SPEED_POW_MULTIPLIER = 0.01;
+	var INITIAL_SPEED = 5;
+
 	var ENEMY_ACCELERATION = 20000;
 	var ENEMY_MAX_SPEED = 10000;
 	var ENEMY_DRAG = 0.9;
-	var MAX_POWER = 4.0;
-	var power = 0.0;
 
 	override public function update(elapsed:Float):Void
 	{
@@ -211,45 +230,70 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 		// Speed up spinning if space is pressed
 		if (spaceInput.triggered)
 		{
-			if (power == 0)
+			if (powerGauge < DEFAULT_POWER)
 			{
-				power = 0.2;
+				// Low-power power-up speed
+				updatePowerGauge(powerGauge + 1);
 			}
-			else if (power < MAX_POWER)
+			else
 			{
-				power *= 1.1;
+				// Normal Power up speed
+				updatePowerGauge(powerGauge + Math.sqrt(101 - Math.min(100, powerGauge)) / 10);
 			}
-
-			angle -= 15;
 		}
 		else
 		{
-			power = 0.0;
+			if (powerGauge < DEFAULT_POWER)
+			{
+				// Refill to default speed
+				updatePowerGauge(Math.min(powerGauge + 0.5, DEFAULT_POWER));
+			}
+			else
+			{
+				// Drain to default speed
+				updatePowerGauge(Math.max(powerGauge - Math.sqrt(101 - Math.min(100, powerGauge)) / 5, DEFAULT_POWER));
+			}
 		}
 
-		hud.setPower(Math.floor(10 * Math.pow(1.5, power)));
-
-		var extraSpeed = Math.pow(1.1, power);
-
-		// bring chain in if shift is pressed
+		// BRAKE ACTION
 		if (shiftInput.triggered)
 		{
-			chainDistance = 150;
+			// Drain speed
+			updatePowerGauge(powerGauge - 1);
 
-			angle += 75;
-			extraSpeed += 2.0;
+			if (powerGauge < DEFAULT_POWER)
+			{
+				angle += 60;
+			}
+			else
+			{
+				angle += powerGauge;
+			}
+
+			effectivePower = Math.max(powerGauge, 1);
 		}
 		else
 		{
-			chainDistance = blockchain.length * 30;
+			angle -= (powerGauge * 0.2);
+
+			effectivePower = powerGauge;
 		}
 
-		var targetRelativeToPlayer = FlxVelocity.velocityFromAngle(angle, chainDistance * Math.pow(1.1, power));
+		hud.setPower(Math.floor(powerGauge));
+		hud.setDefaultPower(DEFAULT_POWER);
 
+		var distanceMultipler = DIST_POW_MULTIPLIER * effectivePower;
+		var targetRelativeToPlayer = FlxVelocity.velocityFromAngle(angle, distanceMultipler);
 		var targetDistance = targetRelativeToPlayer.distanceTo(new FlxPoint(0, 0));
 
-		FlxVelocity.moveTowardsPoint(enemy, playerPos.addPoint(targetRelativeToPlayer), targetDistance * extraSpeed);
+		FlxVelocity.moveTowardsPoint(enemy, playerPos.addPoint(targetRelativeToPlayer),
+			targetDistance * Math.pow(INITIAL_SPEED, SPEED_POW_MULTIPLIER * Math.max(effectivePower, 1)));
 
 		positionBlocks();
+	}
+
+	private function updatePowerGauge(power:Float)
+	{
+		powerGauge = Math.min(100, Math.max(0, power));
 	}
 }

@@ -43,6 +43,12 @@ class HUD extends FlxTypedGroup<FlxSprite>
 		powerBarCounter.text = Std.string(power);
 
 		powerBarFill.fill(FlxColor.TRANSPARENT);
-		powerBarFill.drawRect(0, 0, power / 100 * 160, 20, FlxColor.fromRGB(0, 255, 0));
+
+		var colorValue = Math.floor(power / 100 * 255);
+		powerBarFill.drawRect(0, 0, power / 100 * 160, 20, FlxColor.fromRGB(colorValue, colorValue, 0));
 	}
+
+	var defaultPower:Int;
+
+	public function setDefaultPower(defaultPower:Int) {}
 }
