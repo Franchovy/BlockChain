@@ -77,7 +77,7 @@ class Obstacle extends FlxSprite
 
 			if (this is FastObstacle)
 			{
-				FlxG.sound.play("assets/sounds/gold_hit_by_red.wav");
+				FlxG.sound.play("assets/sounds/hit_yellow.wav");
 			}
 			else
 			{
