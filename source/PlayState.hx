@@ -1,5 +1,6 @@
 package;
 
+import Math;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxState;
@@ -16,12 +17,19 @@ import flixel.ui.FlxButton;
 import flixel.ui.FlxSpriteButton;
 import flixel.util.FlxCollision;
 import flixel.util.FlxColor;
+import flixel.util.FlxTimer;
 
 class PlayState extends FlxState
 {
 	var menu = true;
 	var game_over = false;
 	var level_clear = false;
+	var elapsed_timer:FlxTimer;
+
+	public static var difficulty_scaler = 1.0;
+
+	var elapsed_seconds = 0.0;
+	var difficulty_scaling_divider = 2.0;
 	var obstaclesPool:FlxTypedGroup<SlowObstacle>;
 	var walls:FlxGroup;
 	var fastObstacle:FastObstacle;
@@ -117,10 +125,13 @@ class PlayState extends FlxState
 		startGameText.y += 80;
 		add(startGameText);
 
-		controlsText = new FlxText(0, 0, 0, "[W,A,S,D] to move. [Space] to power up. [Shift] in emergency.", 16);
+		controlsText = new FlxText(0, 0, 0,
+			"[W,A,S,D] to move.\n[Space] to swing the red block faster and further. \n[Shift] to draw it in.\n Don't break your chain else the red block slows down!",
+			16);
 		controlsText.color = FlxColor.fromRGB(230, 230, 230);
 		controlsText.screenCenter();
 		controlsText.y -= 160;
+		controlsText.alignment = FlxTextAlign.CENTER;
 		add(controlsText);
 
 		var explainFontSize = 19;
@@ -142,10 +153,10 @@ class PlayState extends FlxState
 		explainText2.x = explainText1.x + explainText1.width;
 		explainText3.x = explainText2.x + explainText2.width;
 		explainText4.x = explainText3.x + explainText3.width;
-		explainText1.y = controlsText.y + 30;
-		explainText2.y = controlsText.y + 30;
-		explainText3.y = controlsText.y + 30;
-		explainText4.y = controlsText.y + 30;
+		explainText1.y = controlsText.y + 100;
+		explainText2.y = controlsText.y + 100;
+		explainText3.y = controlsText.y + 100;
+		explainText4.y = controlsText.y + 100;
 
 		gameOverText = new flixel.text.FlxText(0, 0, 0, "Game Over", 64);
 
@@ -156,6 +167,17 @@ class PlayState extends FlxState
 
 		spaceInput = new FlxActionDigital();
 		spaceInput.addKey(SPACE, JUST_PRESSED);
+
+		// Add difficulty scaling
+		elapsed_timer = new FlxTimer();
+		elapsed_timer.start(2.0, function(Timer:FlxTimer)
+		{
+			elapsed_seconds += 2.0;
+			difficulty_scaler = 1 + (Math.log(elapsed_seconds) / difficulty_scaling_divider); // higher scaling variable is slower
+			hud.updateScore(Math.round(difficulty_scaler * 5));
+		}, 0);
+		difficulty_scaler = 1.0;
+		elapsed_seconds = 0.0;
 	}
 
 	function startGame()
@@ -195,6 +217,8 @@ class PlayState extends FlxState
 		playerAndEnemy.setupStart();
 
 		FlxG.sound.play("assets/sounds/game_start.wav");
+		difficulty_scaler = 1.0;
+		elapsed_seconds = 0.0;
 	}
 
 	function setGameOver()
@@ -289,7 +313,7 @@ class PlayState extends FlxState
 		FlxG.collide(walls, playerAndEnemy.player);
 
 		// 1 out of 10 chance of spawning block per second.
-		if (Random.float(0, 10.0) * elapsedSinceLastSpawn > 9)
+		if (Random.float(0, 10.0) * elapsedSinceLastSpawn + difficulty_scaler > 9)
 		{
 			// 1 out of 10 chance of that block being a fast moving block.
 			if (!fastObstacle.alive && Random.float(0, 10.0) > 9)

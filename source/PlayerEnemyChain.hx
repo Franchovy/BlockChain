@@ -1,5 +1,6 @@
 package;
 
+import Math;
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -187,11 +188,11 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 
 		if (newBlock == null)
 		{
-			trace("You just too good!");
+			trace("You are just too good!");
 			return;
 		}
 
-		hud.updateScore(50);
+		hud.updateScore(Math.round(50 * PlayState.difficulty_scaler));
 
 		newBlock.setupStart();
 		newBlock.alive = true;
