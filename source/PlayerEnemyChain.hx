@@ -191,6 +191,8 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 			return;
 		}
 
+		hud.updateScore(50);
+
 		newBlock.setupStart();
 		newBlock.alive = true;
 		newBlock.reset(player.x, player.y);
