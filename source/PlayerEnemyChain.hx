@@ -12,6 +12,7 @@ import flixel.math.FlxAngle;
 import flixel.math.FlxPoint;
 import flixel.math.FlxVector;
 import flixel.math.FlxVelocity;
+import flixel.tweens.FlxEase;
 import flixel.util.FlxColor;
 import js.html.Console;
 
@@ -210,6 +211,8 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 	var ENEMY_MAX_SPEED = 10000;
 	var ENEMY_DRAG = 0.9;
 
+	var angleValue:Float = 0.0;
+
 	override public function update(elapsed:Float):Void
 	{
 		shiftInput.update();
@@ -273,16 +276,21 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 		}
 		else
 		{
-			angle -= (powerGauge * 0.2);
+			// Point angle outwards on increasing capacity
+			angle -= powerGauge * 0.2;
+			angle -= numBlocks * 0.5;
 
 			effectivePower = powerGauge;
 		}
+
+		// Use slow-movement angle value to avoid abrupt changes
+		angleValue += (angle - angleValue);
 
 		hud.setPower(Math.floor(powerGauge));
 		hud.setDefaultPower(DEFAULT_POWER);
 
 		var distanceMultipler = DIST_POW_MULTIPLIER * effectivePower;
-		var targetRelativeToPlayer = FlxVelocity.velocityFromAngle(angle, distanceMultipler);
+		var targetRelativeToPlayer = FlxVelocity.velocityFromAngle(angleValue, distanceMultipler);
 		var targetDistance = targetRelativeToPlayer.distanceTo(new FlxPoint(0, 0));
 
 		FlxVelocity.moveTowardsPoint(enemy, playerPos.addPoint(targetRelativeToPlayer),
