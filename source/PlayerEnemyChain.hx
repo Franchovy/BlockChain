@@ -166,6 +166,7 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 		if (block.alive)
 		{
 			FlxG.sound.play("assets/sounds/lose_grey.wav");
+			FlxG.camera.shake(0.01, 0.02);
 		}
 
 		block.alive = false;

@@ -73,6 +73,8 @@ class Obstacle extends FlxSprite
 	{
 		if (!hasBeenTouchedEnemy)
 		{
+			FlxG.camera.shake(0.01, 0.02);
+
 			if (this is FastObstacle)
 			{
 				FlxG.sound.play("assets/sounds/gold_hit_by_red.wav");
