@@ -83,17 +83,8 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 		numBlocks = NUM_BLOCKS_START;
 		player.reset(PLAYER_START_X, PLAYER_START_Y);
 		player.setupStart();
+		enemy.kill();
 		enemy.reset(ENEMY_START_X, ENEMY_START_Y);
-
-		blockchain.clear();
-		for (m in members)
-		{
-			if (m is ChainBlock)
-			{
-				var chainBlock = cast(m, ChainBlock);
-				blockchain.add(chainBlock);
-			}
-		}
 
 		var blockCount = 0;
 		for (block in blockchain)
@@ -103,6 +94,7 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 
 			if (blockCount < numBlocks)
 			{
+				block.alive = true;
 				block.reset(0, 0);
 			}
 			else
