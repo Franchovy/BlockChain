@@ -170,12 +170,7 @@ class PlayState extends FlxState
 
 		// Add difficulty scaling
 		elapsed_timer = new FlxTimer();
-		elapsed_timer.start(2.0, function(Timer:FlxTimer)
-		{
-			elapsed_seconds += 2.0;
-			difficulty_scaler = 1 + (Math.log(elapsed_seconds) / difficulty_scaling_divider); // higher scaling variable is slower
-			hud.updateScore(Math.round(difficulty_scaler * 5));
-		}, 0);
+
 		difficulty_scaler = 1.0;
 		elapsed_seconds = 0.0;
 	}
@@ -219,6 +214,13 @@ class PlayState extends FlxState
 		FlxG.sound.play("assets/sounds/game_start.wav");
 		difficulty_scaler = 1.0;
 		elapsed_seconds = 0.0;
+
+		elapsed_timer.start(2.0, function(Timer:FlxTimer)
+		{
+			elapsed_seconds += 2.0;
+			difficulty_scaler = 1 + (Math.log(elapsed_seconds) / difficulty_scaling_divider); // higher scaling variable is slower
+			hud.updateScore(Math.round(difficulty_scaler * 5));
+		}, 0);
 	}
 
 	function setGameOver()
@@ -248,6 +250,8 @@ class PlayState extends FlxState
 
 		add(gameOverText);
 		add(tryAgainText);
+
+		elapsed_timer.cancel();
 	}
 
 	var elapsedSinceLastSpawn:Float = 0;
