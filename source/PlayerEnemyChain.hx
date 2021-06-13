@@ -152,8 +152,7 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 			var targetPoint = new FlxPoint(targetX, targetY);
 			var targetDistance = targetPoint.distanceTo(block.getPosition());
 
-			var extraSpeedForBlocksNearPlayerOrEnemy = cast(Math.min(n - i, i), Int);
-			var extraSpeed = extraSpeedForBlocksNearPlayerOrEnemy < 3 ? [3.0, 2.0, 1.5,][extraSpeedForBlocksNearPlayerOrEnemy] : 1.0;
+			var extraSpeed = Math.sqrt(i);
 
 			if (targetDistance > 1)
 			{
