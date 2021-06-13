@@ -204,6 +204,10 @@ class PlayState extends FlxState
 			return;
 		}
 
+		gameMusic.stop();
+		menuMusic.play();
+		menuMusic.looped = true;
+
 		game_over = true;
 
 		controlsText.alpha = 1.0;
