@@ -8,38 +8,48 @@ import flixel.util.FlxColor;
 class Obstacle extends FlxSprite
 {
 	static inline var SIZE:Int = 32;
-	// TODO: Tie speed to game difficulty
-	static inline var SPEED:Float = 200;
 
 	public static var onTouchedKilledCallback:() -> Void;
 
-	public function new()
+	var _activeColour:FlxColor;
+	var _isVertical:Bool;
+	var _speed:Float;
+
+	public function new(speed:Float, colour:FlxColor)
 	{
 		super();
 
-		makeGraphic(SIZE, SIZE, FlxColor.BLUE);
+		_speed = speed;
+		_activeColour = colour;
 	}
 
 	public function spawn()
 	{
 		hasBeenTouchedEnemy = false;
 
-		makeGraphic(SIZE, SIZE, FlxColor.BLUE);
+		makeGraphic(SIZE, SIZE, _activeColour);
 
-		if (Random.bool())
+		_isVertical = Random.bool();
+		if (_isVertical)
 		{
 			// Along top or bottom of the screen
 			x = Random.int(1, FlxG.width - SIZE - 1);
-			y = Random.bool() ? -SIZE : FlxG.height;
-			velocity.set(0, y > 0 ? -SPEED : SPEED);
+			y = Random.bool() ? 1 - SIZE : FlxG.height - 1;
 		}
 		else
 		{
 			// Along left or right of the screen
-			x = Random.bool() ? -SIZE : FlxG.width;
+			x = Random.bool() ? 1 - SIZE : FlxG.width - 1;
 			y = Random.int(1, FlxG.height - SIZE - 1);
-			velocity.set(x > 0 ? -SPEED : SPEED, 0);
 		}
+	}
+
+	public function go()
+	{
+		if (_isVertical)
+			velocity.set(0, y > 0 ? _speed : _speed);
+		else
+			velocity.set(x > 0 ? -_speed : _speed, 0);
 	}
 
 	override public function update(elapsed:Float)
