@@ -111,10 +111,14 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 			}
 		}
 		positionBlocks();
+
+		FlxG.camera.shake(0.01, 0.2);
 	}
 
 	public function death()
 	{
+		FlxG.camera.shake(0.01, 0.2);
+
 		for (block in blockchain)
 		{
 			block.disable();
