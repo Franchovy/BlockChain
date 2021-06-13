@@ -11,6 +11,8 @@ class Obstacle extends FlxSprite
 	// TODO: Tie speed to game difficulty
 	static inline var SPEED:Float = 200;
 
+	public static var onTouchedKilledCallback:() -> Void;
+
 	public function new()
 	{
 		super();
@@ -45,7 +47,14 @@ class Obstacle extends FlxSprite
 		super.update(elapsed);
 
 		if (!isOnScreen())
+		{
+			if (hasBeenTouchedEnemy)
+			{
+				onTouchedKilledCallback();
+			}
+
 			kill();
+		}
 	}
 
 	public var hasBeenTouchedEnemy = false;

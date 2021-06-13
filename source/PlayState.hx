@@ -54,12 +54,21 @@ class PlayState extends FlxState
 			obstaclesPool.add(obstacle);
 		}
 
+		//
+
 		walls = FlxCollision.createCameraWall(FlxG.camera, 1);
 
 		// Instantiate Player/Enemy and HUD
 
 		hud = new HUD();
 		playerAndEnemy = new PlayerEnemyChain(hud);
+
+		// Set callback to player to get more blocks
+
+		Obstacle.onTouchedKilledCallback = () ->
+		{
+			playerAndEnemy.addBlock();
+		}
 
 		// Add menu text
 

@@ -28,11 +28,12 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 
 	var numBlocks:Int;
 
-	public var blockchain:List<ChainBlock>;
+	public var blockchain:FlxTypedGroup<ChainBlock>;
 
 	var shiftInput:FlxActionDigital;
 	var spaceInput:FlxActionDigital;
 
+	static var BLOCKCHAIN_CAPACITY = 25;
 	static var NUM_BLOCKS_START = 7;
 	static var PLAYER_START_X = 100;
 	static var PLAYER_START_Y = 100;
@@ -51,13 +52,11 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 		this.numBlocks = NUM_BLOCKS_START;
 
 		// Instatiate blocks in chain
-		blockchain = new List<ChainBlock>();
-		for (i in 0...numBlocks)
+		blockchain = new FlxTypedGroup<ChainBlock>(BLOCKCHAIN_CAPACITY);
+		for (i in 0...BLOCKCHAIN_CAPACITY)
 		{
-			var startPosX = player.x + Player.TILE_SIZE / 2;
-			var startPosY = player.y + Player.TILE_SIZE / 2;
-
 			var block = new ChainBlock();
+			block.alive = false;
 			blockchain.add(block);
 			add(block);
 		}
@@ -128,7 +127,7 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 		var i = 1;
 		var n = numBlocks + 2;
 
-		for (block in blockchain)
+		blockchain.forEachAlive(function(block)
 		{
 			var startPosX = player.x + Player.TILE_SIZE / 2 - ChainBlock.TILE_SIZE;
 			var startPosY = player.y + Player.TILE_SIZE / 2 - ChainBlock.TILE_SIZE;
@@ -153,20 +152,32 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 			}
 
 			i++;
-		}
+		});
 	}
 
 	public function loseBlock(block:ChainBlock)
 	{
-		blockchain.remove(block);
-		numBlocks = blockchain.length;
+		block.disable();
+		block.alive = false;
+
+		numBlocks = blockchain.countLiving();
+	}
+
+	public function addBlock()
+	{
+		var newBlock = blockchain.getFirstDead();
+
+		newBlock.setupStart();
+		newBlock.alive = true;
+		newBlock.reset(player.x, player.y);
+
+		numBlocks = blockchain.countLiving();
 	}
 
 	var chainDistance = 250;
 	var ENEMY_ACCELERATION = 20000;
 	var ENEMY_MAX_SPEED = 10000;
 	var ENEMY_DRAG = 0.9;
-
 	var MAX_POWER = 4.0;
 	var power = 0.0;
 
