@@ -177,6 +177,12 @@ class PlayerEnemyChain extends FlxTypedGroup<FlxSprite>
 	{
 		var newBlock = blockchain.getFirstDead();
 
+		if (newBlock == null)
+		{
+			trace("You just too good!");
+			return;
+		}
+
 		newBlock.setupStart();
 		newBlock.alive = true;
 		newBlock.reset(player.x, player.y);
