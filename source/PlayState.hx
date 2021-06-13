@@ -9,6 +9,7 @@ import flixel.input.actions.FlxAction.FlxActionDigital;
 import flixel.input.actions.FlxActionManager;
 import flixel.math.FlxVector;
 import flixel.math.FlxVelocity;
+import flixel.system.FlxAssets;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.ui.FlxSpriteButton;
@@ -43,6 +44,9 @@ class PlayState extends FlxState
 	override public function create()
 	{
 		super.create();
+
+		// Play music
+		FlxG.sound.playMusic(FlxAssets.getSound("assets/music/menu_music"));
 
 		// Add moving blocks
 
@@ -160,6 +164,9 @@ class PlayState extends FlxState
 		add(playerAndEnemy);
 
 		playerAndEnemy.setupStart();
+
+		// FlxG.sound.music.kill();
+		FlxG.sound.playMusic(FlxAssets.getSound("assets/music/game_music"));
 	}
 
 	function setGameOver()
@@ -168,6 +175,8 @@ class PlayState extends FlxState
 		{
 			return;
 		}
+
+		FlxG.sound.playMusic(FlxAssets.getSound("assets/music/menu_music"));
 
 		game_over = true;
 
