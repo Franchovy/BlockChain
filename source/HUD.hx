@@ -55,6 +55,15 @@ class HUD extends FlxTypedGroup<FlxSprite>
 
 	var score = 0;
 
+	public function resetScore()
+	{
+		score = 0;
+		scoreCounter.text = Std.string(0);
+		scoreCounter.x = FlxG.width - scoreCounter.fieldWidth - 15;
+
+		scoreLabel.x = scoreCounter.x - scoreLabel.width - 5;
+	}
+
 	// Add score!
 	public function updateScore(score:Int)
 	{

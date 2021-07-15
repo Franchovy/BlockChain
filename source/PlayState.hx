@@ -215,6 +215,8 @@ class PlayState extends FlxState
 		difficulty_scaler = 1.0;
 		elapsed_seconds = 0.0;
 
+		hud.resetScore();
+
 		elapsed_timer.start(2.0, function(Timer:FlxTimer)
 		{
 			elapsed_seconds += 2.0;
