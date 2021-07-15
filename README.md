@@ -1,6 +1,6 @@
 # BlockChain
 
-#### Playable at https://blockchainthegame.web.app
+#### Playable at [blockchainthegame.web.app](blockchainthegame.web.app)
 
 Block-swinging block-smashing game enjoyable for all brain sizes.
 
