@@ -32,7 +32,7 @@ class PlayState extends FlxState
 	var difficulty_scaling_divider = 2.0;
 	var obstaclesPool:FlxTypedGroup<SlowObstacle>;
 	var walls:FlxGroup;
-	var fastObstacle:FastObstacle;
+	var fastObstaclesPool:FlxTypedGroup<FastObstacle>;
 
 	var playerAndEnemy:PlayerEnemyChain;
 	var hud:HUD;
@@ -96,10 +96,18 @@ class PlayState extends FlxState
 			obstaclesPool.add(obstacle);
 		}
 
+		var fastObstaclesPoolSize = 5;
+		fastObstaclesPool = new FlxTypedGroup<FastObstacle>(fastObstaclesPoolSize);
+		for (_ in 0...fastObstaclesPoolSize)
+		{
+			var obstacle = new FastObstacle();
+			obstacle.kill();
+			fastObstaclesPool.add(obstacle);
+		}
+
 		//
 
 		walls = FlxCollision.createCameraWall(FlxG.camera, 1);
-		fastObstacle = new FastObstacle();
 
 		// Instantiate Player/Enemy and HUD
 
@@ -307,7 +315,7 @@ class PlayState extends FlxState
 
 		// If enemy is nearby to an obstacle, accelerate towards it
 		obstaclesPool.forEachAlive(handleObstacle);
-		handleObstacle(fastObstacle);
+		fastObstaclesPool.forEachAlive(handleObstacle);
 
 		if (level_clear || game_over)
 		{
@@ -315,16 +323,16 @@ class PlayState extends FlxState
 		}
 
 		FlxG.collide(obstaclesPool, playerAndEnemy);
-		FlxG.collide(fastObstacle, playerAndEnemy);
+		FlxG.collide(fastObstaclesPool, playerAndEnemy);
 		FlxG.collide(walls, playerAndEnemy.player);
 
 		// 1 out of 10 chance of spawning block per second.
 		if (Random.float(0, 10.0) * elapsedSinceLastSpawn + difficulty_scaler > 9)
 		{
 			// 1 out of 10 chance of that block being a fast moving block.
-			if (!fastObstacle.alive && Random.float(0, 10.0) > 9)
+			if (Random.float(0, 10.0) > 9)
 			{
-				fastObstacle.revive();
+				var fastObstacle = fastObstaclesPool.recycle(FastObstacle);
 				add(fastObstacle);
 				fastObstacle.spawn();
 			}
