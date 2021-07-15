@@ -29,7 +29,7 @@ class PlayState extends FlxState
 	public static var difficulty_scaler = 1.0;
 
 	var elapsed_seconds = 0.0;
-	var difficulty_scaling_divider = 2.0;
+	var difficulty_scaling_divider = 5.5;
 	var obstaclesPool:FlxTypedGroup<SlowObstacle>;
 	var walls:FlxGroup;
 	var fastObstaclesPool:FlxTypedGroup<FastObstacle>;
@@ -326,19 +326,23 @@ class PlayState extends FlxState
 		FlxG.collide(fastObstaclesPool, playerAndEnemy);
 		FlxG.collide(walls, playerAndEnemy.player);
 
+		trace(difficulty_scaler);
+
 		// 1 out of 10 chance of spawning block per second.
-		if (Random.float(0, 10.0) * elapsedSinceLastSpawn + difficulty_scaler > 9)
+		if (Random.float(0, 10.0) * elapsedSinceLastSpawn * difficulty_scaler > 9)
 		{
 			// 1 out of 10 chance of that block being a fast moving block.
-			if (Random.float(0, 10.0) > 9)
+			if (Random.float(0, 100.0) * Math.sqrt(difficulty_scaler) > 99)
 			{
 				var fastObstacle = fastObstaclesPool.recycle(FastObstacle);
+				fastObstacle.setSpeedMultiplier(difficulty_scaler);
 				add(fastObstacle);
 				fastObstacle.spawn();
 			}
 			else
 			{
 				var obstacle = obstaclesPool.recycle(SlowObstacle);
+				obstacle.setSpeedMultiplier(difficulty_scaler);
 				add(obstacle);
 				obstacle.spawn();
 			}

@@ -6,7 +6,7 @@ class SlowObstacle extends Obstacle
 {
 	public function new()
 	{
-		super(200, FlxColor.BLUE);
+		super(100, FlxColor.BLUE);
 	}
 
 	override public function spawn()

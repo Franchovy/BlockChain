@@ -14,6 +14,7 @@ class Obstacle extends FlxSprite
 	var _activeColour:FlxColor;
 	var _isVertical:Bool;
 	var _speed:Float;
+	var _speedMultiplier:Float = 1.0;
 
 	public function new(speed:Float, colour:FlxColor)
 	{
@@ -47,9 +48,9 @@ class Obstacle extends FlxSprite
 	public function go()
 	{
 		if (_isVertical)
-			velocity.set(0, y > 0 ? -_speed : _speed);
+			velocity.set(0, y > 0 ? -(_speed * _speedMultiplier) : _speed * _speedMultiplier);
 		else
-			velocity.set(x > 0 ? -_speed : _speed, 0);
+			velocity.set(x > 0 ? -(_speed * _speedMultiplier) : _speed * _speedMultiplier, 0);
 	}
 
 	override public function update(elapsed:Float)
@@ -68,6 +69,11 @@ class Obstacle extends FlxSprite
 	}
 
 	public var hasBeenTouchedEnemy = false;
+
+	public function setSpeedMultiplier(multiplier:Float)
+	{
+		_speedMultiplier = multiplier;
+	}
 
 	public function onTouchEnemy()
 	{
